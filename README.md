@@ -12,7 +12,7 @@ cd KG-LLM-MDQA
 git submodule update --init --recursive --remote
 ```
 
-### 3. Virtual Environment
+### 3. Virtual Environment (conda or pyenv)
 
 Anaconda
 ```
@@ -21,10 +21,12 @@ conda install -c anaconda python=3.8
 
 [Pyenv](https://github.com/pyenv/pyenv)
 
-* Recommend installing with [here](https://github.com/pyenv/pyenv?tab=readme-ov-file#basic-github-checkout)
+    * Recommend installing with [here](https://github.com/pyenv/pyenv?tab=readme-ov-file#basic-github-checkout)
 
 * In a terminal
+
 ```
+# Install python3.8, only need to run once
 pyenv install 3.8.16
 ```
 
@@ -33,7 +35,7 @@ cd KG-LLM-MDQA/
 pyenv local 3.8.16
 python3.8 -m venv .env --copies
 ```
-Activate the environment
+* Activate the environment
 ```
 . .env/bin/activate
 ```
