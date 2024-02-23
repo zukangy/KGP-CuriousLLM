@@ -21,7 +21,7 @@ conda install -c anaconda python=3.8
 
 [Pyenv](https://github.com/pyenv/pyenv)
 
-    * Recommend installing with [here](https://github.com/pyenv/pyenv?tab=readme-ov-file#basic-github-checkout)
+Recommend installing with [here](https://github.com/pyenv/pyenv?tab=readme-ov-file#basic-github-checkout)
 
 * In a terminal
 
