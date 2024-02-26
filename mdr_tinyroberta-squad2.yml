@@ -1,0 +1,23 @@
+dataset: "HotpotQA"
+train_percent: 1.0
+model_name: "deepset/tinyroberta-squad2"
+max_len: 200
+max_q_len: 64
+max_q_sp_len: 256
+weight_decay: 0.0
+lr: 3e-5
+adam_epsilon: 1e-8
+freeze_layers: 0
+train_bsz: 32
+num_workers: 12
+eval_bsz: 32
+epochs: 4
+warm_ratio: 0.2
+max_grad_norm: 2.0
+seed: 1028
+gpus: "mps"
+do_train: True
+checkpoint_root_dir: "checkpoint_tinyRo"
+checkpoint_id: 0
+checkpoint_step: 250
+from_checkpoint:
