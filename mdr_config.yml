@@ -1,0 +1,21 @@
+dataset: "HotpotQA"
+train_percent: 1.0
+model_name: "bert-base-uncased"
+max_len: 128
+max_q_len: 70
+max_q_sp_len: 200
+weight_decay: 0.0
+lr: 2e-5
+adam_epsilon: 1e-8
+freeze_layers: 0
+train_bsz: 32
+num_workers: 12
+eval_bsz: 32
+epochs: 50
+warm_ratio: 0.1
+max_grad_norm: 2.0
+seed: 1028
+gpus: "mps"
+do_train: True
+checkpoint_root_dir: "checkpoint"
+from_checkpoint:
