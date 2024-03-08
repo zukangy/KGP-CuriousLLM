@@ -1,0 +1,8 @@
+evaluate
+pandas
+numpy
+peft
+PyYAML
+tqdm
+transformers
+mlx

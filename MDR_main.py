@@ -47,10 +47,6 @@ def run(train_data, val_data, model, tokenizer, collate, args, checkpoint_dir=No
         
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         # Checkpoint the model at the end of each epoch
-        os.makedirs(f"./{args['checkpoint_root_dir']}", exist_ok=True)
-        os.makedirs(f"./{args['checkpoint_root_dir']}/MDR", exist_ok=True)
-        os.makedirs(f"./{args['checkpoint_root_dir']}/MDR/{args['dataset']}", exist_ok=True)
-        os.makedirs(f"./{args['checkpoint_root_dir']}/MDR/{args['dataset']}/{args['checkpoint_id']}", exist_ok=True)
         os.makedirs(f"./{args['checkpoint_root_dir']}/MDR/{args['dataset']}/{args['checkpoint_id']}/{timestamp}", exist_ok=True)
         
         # Save the config info 
@@ -179,7 +175,7 @@ def run(train_data, val_data, model, tokenizer, collate, args, checkpoint_dir=No
 
 
 if __name__=="__main__":
-    args = yaml.safe_load(open('mdr_tinyroberta-squad2.yml', 'r'))
+    args = yaml.safe_load(open('configs/mdr_tinyroberta-squad2.yml', 'r'))
     
     train_data, val_data = load_dataset(dataset=args['dataset'], train_percent=args['train_percent'], 
                                         seed=args['seed'])
