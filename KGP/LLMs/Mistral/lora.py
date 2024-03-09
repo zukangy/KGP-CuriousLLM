@@ -9,8 +9,6 @@ import mlx.nn as nn
 class LoRALinear(nn.Module):
     @staticmethod
     def from_linear(linear: nn.Linear, rank: int = 8):
-        # TODO remove when input_dims and output_dims are attributes
-        # on linear and quantized linear
         output_dims, input_dims = linear.weight.shape
         if isinstance(linear, nn.QuantizedLinear):
             input_dims *= 32 // linear.bits

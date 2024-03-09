@@ -1,4 +1,4 @@
-dataset: "HotpotQA"
+root_dir: '.'
 train_percent: 1.0
 model_name: "deepset/tinyroberta-squad2"
 max_len: 200
@@ -11,13 +11,13 @@ freeze_layers: 0
 train_bsz: 32
 num_workers: 12
 eval_bsz: 32
-epochs: 4
+epochs: 50
 warm_ratio: 0.2
 max_grad_norm: 2.0
 seed: 1028
 gpus: "mps"
 do_train: True
 checkpoint_root_dir: "checkpoint_tinyRo"
-checkpoint_id: 0
+checkpoint_id: 1
 checkpoint_step: 250
-from_checkpoint:
+from_checkpoint: "models/checkpoint_tinyRo/MDR/HotpotQA/1/2024-03-15_00-39-31/model.pt"

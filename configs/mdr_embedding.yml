@@ -1,0 +1,11 @@
+root_dir: "."
+dataset: "DATA/HotpotQA/MDR/test_docs.json"
+model:
+  run_id: '2'
+  base_model: "deepset/tinyroberta-squad2"
+  from_checkpoint: "models/checkpoint_tinyRo/MDR/HotpotQA/1/2024-03-15_00-39-31/best_model.pt"
+  batch_size: 1
+  max_token_len: 200
+  device: "mps"
+  save_every: 50000
+emb_checkpoint: 

@@ -1,3 +1,5 @@
+# Taken from mlx-example. Quantie the Mistral model using the mlx library.
+
 import os 
 import yaml 
 from mlx_lm.utils import convert
