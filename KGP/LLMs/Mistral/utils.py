@@ -15,9 +15,10 @@ from mlx.utils import tree_flatten
 import transformers
 from huggingface_hub import snapshot_download
 
-import KGP.Traversal_agents.Mistral.mistral as mistral
-from KGP.Traversal_agents.Mistral.lora import LoRALinear
-from KGP.Traversal_agents.Mistral.dataset import Dataset
+import KGP.LLMs.Mistral.mistral as mistral
+from KGP.LLMs.Mistral.lora import LoRALinear
+from KGP.LLMs.Mistral.dataset import Dataset
+
 
 # Constants
 MODEL_MAPPING = {
@@ -116,7 +117,7 @@ def load_lora_model(model: str, adapter_file: str = None, lora_rank: int = 8,
     return model, tokenizer
 
 
-def _generate(
+def generate(
     prompt: mx.array, model: nn.Module, temp: float = 0.0
 ) -> Generator[mx.array, None, None]:
     """
@@ -147,7 +148,7 @@ def _generate(
         yield y
         
         
-def generate(model, prompt, tokenizer, temp: float = 0.3, 
+def inference(model, prompt, tokenizer, temp: float = 0.3, 
              max_token_len: int = 100, parse_template: bool = True,
              verbose: bool = 0):
     if parse_template:
@@ -162,7 +163,7 @@ def generate(model, prompt, tokenizer, temp: float = 0.3,
 
     tokens = []
     skip = 0
-    pred_token_seq = _generate(prompt, model, temp=temp)
+    pred_token_seq = generate(prompt, model, temp=temp)
     for token, n in zip(pred_token_seq, range(max_token_len)):
         if token == tokenizer.eos_token_id:
             break

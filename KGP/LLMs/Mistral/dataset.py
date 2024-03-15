@@ -39,6 +39,7 @@ def extract_records(data):
     
     
 def split_raw_dataset(raw_data_path, root_dir='.', valid_perc=0.1, test_perc=0.2, seed=1028):
+    """ Split the raw dataset into train, valid and test sets and save them as jsonl files"""
     with open(raw_data_path, 'r') as f:
         raw_dataset = json.load(f)
     

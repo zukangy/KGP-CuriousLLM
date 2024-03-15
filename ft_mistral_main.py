@@ -13,12 +13,12 @@ import mlx.optimizers as optim
 from mlx.utils import tree_flatten
 import numpy as np
 
-from KGP.Traversal_agents.Mistral.mistral import mistral_loss
-from KGP.Traversal_agents.Mistral.quantize_mistral_mlx import load_config
-from KGP.Traversal_agents.Mistral.utils import (load_dataset, 
-                                                iterate_batches, 
-                                                evaluate,
-                                                load_lora_model)
+from KGP.LLMs.Mistral.mistral import mistral_loss
+from KGP.LLMs.Mistral.quantize_mistral_mlx import load_config
+from KGP.LLMs.Mistral.utils import (load_dataset, 
+                                    iterate_batches, 
+                                    evaluate,
+                                    load_lora_model)
 
 
 def train(model, train_set, val_set, optimizer, loss, tokenizer, args):
@@ -105,7 +105,7 @@ def train(model, train_set, val_set, optimizer, loss, tokenizer, args):
 
 
 if __name__ == "__main__":
-    args = load_config('./configs/lora_mistral.yml')
+    args = load_config('./configs/ft_mistral.yml')
     
     # Create data folder if it doesn't exist
     os.makedirs(os.path.join(args['root_dir'], args['dataset']), exist_ok=True)

@@ -4,10 +4,11 @@ import torch
 from transformers import Trainer
 from peft import PeftModel
 
-from KGP.Traversal_agents.T5.dataset import load_dataset, EvidencePromptDataset
-from KGP.Traversal_agents.T5.utils import seed_everything, print_number_of_trainable_model_parameters
-from KGP.Traversal_agents.T5.flan_t5 import create_flan_t5_base_model
-from KGP.Traversal_agents.T5.lora import create_peft_model, create_training_args
+from KGP.LLMs.T5.dataset import load_dataset, EvidencePromptDataset
+from KGP.LLMs.T5.utils import seed_everything, print_number_of_trainable_model_parameters
+from KGP.LLMs.T5.flan_t5 import create_flan_t5_base_model
+from KGP.LLMs.T5.lora import create_peft_model, create_training_args
+from KGP.LLMs.Mistral.quantize_mistral_mlx import load_config
 
 
 def run(train_data, val_data, args):
@@ -70,7 +71,7 @@ def run(train_data, val_data, args):
     tokenizer.save_pretrained(peft_model_path)
 
 if __name__ == "__main__":
-    args = yaml.safe_load(open('./t5_agent_config.yml', 'r'))
+    args = load_config('./T5.yml')
     
     train_data, val_data = load_dataset(args)
     

@@ -6,3 +6,5 @@ PyYAML
 tqdm
 transformers
 mlx
+networkx 
+openai 
