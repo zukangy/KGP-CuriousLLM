@@ -25,10 +25,6 @@ if __name__=="__main__":
     # Specified run_id to avoid overwriting the previous graph
     os.makedirs(os.path.join(args['root_dir'], f"DATA/KG/graph_{args['run_id']}"), exist_ok=True)
     
-    # Checkpoint the graph without the node features
-    # with open(os.path.join(args['root_dir'], f"DATA/KG/graph_{args['run_id']}", "graph.gpickle"), 'wb') as f:
-    #     pickle.dump(G, f, pickle.HIGHEST_PROTOCOL)
-    
     passages_data = json.load(open(os.path.join(args['root_dir'], args['passages_file'])))
     
     updated_G = add_node_features(G, passages_data, embs)

@@ -3,24 +3,26 @@ init_retriever:
   name: 'tfidf'
   topk: 5
   params:
-    stop_words: 'english'
-    min_df: 2
+    min_df: 1
 retriever:
   name: "mistral"
   model: "models/mistral/mistral_quantized_8_bit"
-  adapter: "models/mistral/ft_mistral_quantized_8_bit_2024-03-07_20-27-28/cp_mistral_quantized_8_bit/adapters.npz"
+  adapter: "models/mistral/ft_mistral_quantized_8_bit_2024-03-16_01-00-21/cp_mistral_quantized_8_bit/adapters.npz"
   model_params:
-    lora_rank: 16
+    lora_rank: 32
     lora_layers: 32
   inference_params:
-    temp: 0.3
+    temp: 0.1
     max_token_len: 50
-KG: "DATA/KG/graph_1/updated_graph.gpickle"
+KG: "DATA/KG/graph_1/graph.gpickle"
 emb_model: 
-  base_model: "deepset/tinyroberta-squad2"
-  from_checkpoint: "models/checkpoint_tinyRo/MDR/HotpotQA/0/2024-03-02_12-34-08/best_model.pt"
-  max_token_len: 200
+  model: "sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
   device: "mps"
 traversal_params: 
   n_hop: 2
-  n_neighbors: 10
+  n_neighbors: 3
+checkpoint:
+  save_every: 5
+  save_dir: "DATA/KG/evidence/checkpoints"
+  resume: True
+  checkpoint_path: "DATA/KG/evidence.json"

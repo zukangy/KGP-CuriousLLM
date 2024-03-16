@@ -15,7 +15,7 @@ def run(data, model, tokenizer, args):
     # Save a copy of the raw data
     # Define run_id in case of overwriting
     os.makedirs(os.path.join(args['root_dir'], 'DATA/KG', f"emb_{args['model']['run_id']}"), exist_ok=True)
-    with open(os.path.join(args['root_dir'], 'DATA/KG', f"emb_{args['model']['run_id']}", 'raw_data.json'), 'w') as f:
+    with open(os.path.join(args['root_dir'], 'DATA/KG', f"emb_{args['model']['run_id']}", 'evidence_passages.json'), 'w') as f:
         json.dump(data, f, indent=4)
     print('Raw data saved...')    
     
