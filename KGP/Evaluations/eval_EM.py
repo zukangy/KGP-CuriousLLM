@@ -7,7 +7,7 @@ from sentence_transformers import SentenceTransformer
 DEVICE = "mps"
 
 if __name__=="__main__":
-    with open('./DATA/KG/evidence/checkpoint_mdr_agent/evidence.json', 'r') as f:
+    with open('./DATA/KG/evidence_100/mistral_agent/evidence.json', 'r') as f:
         data = json.load(f)
         
     # Load sentence transformer
@@ -21,7 +21,7 @@ if __name__=="__main__":
     for record in tqdm(data, total=len(data)):
         type = record['type']
         question = record['question']
-        found_evidence = record['found_evidence']
+        found_evidence = record['evidence']
         evidence_emb = emb.encode(found_evidence, device=DEVICE)
         supports = record['supports']
         for s in supports:

@@ -32,7 +32,7 @@ class Mistral_Agent(Base_Agent):
     
     def get_top_k_neighbors(self, G, curr_path, prompt):
         question = self.retriever.get_question(self.get_prompt(prompt, curr_path, G))
-        question_emb = self.emb.encode(question, device=self.args['emb_model']['device'])
+        question_emb = self.emb.encode(question, device=self.args['device'])
         
         neighbors = list(G.neighbors(curr_path[-1]))
         
@@ -41,11 +41,11 @@ class Mistral_Agent(Base_Agent):
         else:
             neighbors_passages = [G.nodes[neighbor]['passage'] for neighbor in neighbors]
             
-        neighbors_emb = self.emb.encode(neighbors_passages, device=self.args['emb_model']['device'])
+        neighbors_emb = self.emb.encode(neighbors_passages, device=self.args['device'])
         
         sim_scores = self.get_sim_scores(question_emb, neighbors_emb)
         
-        top_neighbors_indices = sim_scores.argsort()[-self.args['traversal_params']['n_neighbors'] : ].tolist()
+        top_neighbors_indices = sim_scores.argsort()[-self.args['retriever']['traversal_params']['n_neighbors'] : ].tolist()
         top_neighbors = [neighbors[i] for i in top_neighbors_indices]
         
         return top_neighbors
@@ -84,48 +84,31 @@ class TF_IDF_Agent(Base_Agent):
         
     def get_top_k_neighbors(self, G, curr_path, prompt):
         neighbors = list(G.neighbors(curr_path[-1]))
+        neighbors_passages = [f"Title: {G.nodes[neighbor]['title']}. {G.nodes[neighbor]['passage']}" 
+                              for neighbor in neighbors]  
         
-        if self.args['titled']:
-            neighbors_passages = [f"Title: {G.nodes[neighbor]['title']}. {G.nodes[neighbor]['passage']}" for neighbor in neighbors]
-        else:
-            neighbors_passages = [G.nodes[neighbor]['passage'] for neighbor in neighbors]    
-        
-        params = self.args['init_retriever']['params'] if self.args['init_retriever']['params'] else {}
-        vectorizer = TfidfVectorizer(**params) 
-        
+        vectorizer = TfidfVectorizer() 
         tfidf_matrix = vectorizer.fit_transform(neighbors_passages)
-        query_emb = vectorizer.transform([self.get_prompt(prompt, curr_path, G)])
+        query_emb = vectorizer.transform([prompt])
         cosine_sim = cosine_similarity(query_emb, tfidf_matrix).flatten()
-        return cosine_sim.argsort()[-self.args['traversal_params']['n_neighbors'] : ][::-1]
-    
-    @staticmethod
-    def get_prompt(prompt, curr_path,  G):
-        return "Question: " + prompt + " Evidence: " + '. '.join([G.nodes[node]['passage'] for node in curr_path])
-        
+        topk = cosine_sim.argsort()[-self.args['retriever']['traversal_params']['n_neighbors']:][::-1]
+        return [neighbors[i] for i in topk]
+
         
 class BM25_Agent(Base_Agent):
     def __init__(self, args):
         super().__init__(args)
+        self.tokenizer = word_tokenize
         
     def get_top_k_neighbors(self, G, curr_path, prompt):
         neighbors = list(G.neighbors(curr_path[-1]))
+        neighbors_passages = [f"Title: {G.nodes[neighbor]['title']}. {G.nodes[neighbor]['passage']}" for neighbor in neighbors] 
         
-        if self.args['titled']:
-            neighbors_passages = [f"Title: {G.nodes[neighbor]['title']}. {G.nodes[neighbor]['passage']}" for neighbor in neighbors]
-        else:
-            neighbors_passages = [G.nodes[neighbor]['passage'] for neighbor in neighbors]    
-        
-        corpus = [word_tokenize(doc) for doc in neighbors_passages]
-        
-        params = self.args['init_retriever']['params'] if self.args['init_retriever']['params'] else {}
-        bm25 = BM25Okapi(corpus, **params)
-        
-        scores = bm25.get_scores(self.get_prompt(prompt, curr_path, G))
-        return scores.argsort()[-self.args['traversal_params']['n_neighbors'] : ][::-1]
-    
-    @staticmethod
-    def get_prompt(prompt, curr_path,  G):
-        return "Question: " + prompt + " Evidence: " + '. '.join([G.nodes[node]['passage'] for node in curr_path])
+        corpus = [self.tokenizer(doc) for doc in neighbors_passages]
+        bm25 = BM25Okapi(corpus)
+        scores = bm25.get_scores(self.tokenizer(prompt))
+        topk = scores.argsort()[-self.args['retriever']['traversal_params']['n_neighbors']:][::-1]
+        return [neighbors[i] for i in topk]
     
 
 class MDR_Agent(Base_Agent):
@@ -135,36 +118,32 @@ class MDR_Agent(Base_Agent):
         
     def get_top_k_neighbors(self, G, curr_path, prompt):
         neighbors = list(G.neighbors(curr_path[-1]))
-        
+        self.model = self.model.to(self.args['device'])
         try: 
             neighbors_passage_embs = [G.nodes[neighbor]['emb'] for neighbor in neighbors]
-            curr_passage_emb = G.nodes[curr_path[-1]]['emb'].reshape(1, -1)
-        
-            neighbors_passage_embs = np.vstack(neighbors_passage_embs)
+            neighbors_passage_embs = torch.tensor(np.vstack(neighbors_passage_embs)).to(self.args['device'])
+            
         except:
-        
-            neighbors_passages = [G.nodes[neighbor]['passage'] for neighbor in neighbors]    
             neighbors_titles = [G.nodes[neighbor]['title'] for neighbor in neighbors]
+            neighbors_passages = [G.nodes[neighbor]['passage'] for neighbor in neighbors]    
         
             encoded_pair = self.tokenizer(text=neighbors_titles, text_pair=neighbors_passages, max_length=200, 
-                                        return_tensors='pt', padding=True, truncation=True)
-        
-            self.model.to(self.args['retriever']['device'])
-        
-            for key in encoded_pair:
-                encoded_pair[key] = encoded_pair[key].to(self.args['retriever']['device'])
+                                          return_tensors='pt', padding=True, truncation=True).to(self.args['device'])
             
-            neighbors_passage_embs = self.model(encoded_pair['input_ids'], encoded_pair['attention_mask']).detach().cpu().numpy()
-            curr_passage_encoded = self.tokenizer(text=G.nodes[curr_path[-1]]['title'], text_pair=G.nodes[curr_path[-1]]['passage'], 
-                                                  max_length=200, return_tensors='pt', padding=True, truncation=True)
-            curr_passage_emb = self.model(curr_passage_encoded['input_ids'], curr_passage_encoded['attention_mask']).detach().cpu().numpy()
+            neighbors_passage_embs = self.model(encoded_pair['input_ids'], encoded_pair['attention_mask'])
         
-        cosine_sim = cosine_similarity(curr_passage_emb, neighbors_passage_embs).flatten()
-        return cosine_sim.argsort()[-self.args['traversal_params']['n_neighbors'] : ][::-1]
+        concated_passage = self.concat_title_passage(G.nodes[curr_path[-1]]['title'], G.nodes[curr_path[-1]]['passage'])
+        curr_query_encoded = self.tokenizer(text=prompt, text_pair=concated_passage, 
+                                            max_length=200, return_tensors='pt', padding=True, truncation=True).to(self.args['device'])
+        curr_query_emb = self.model(curr_query_encoded['input_ids'], curr_query_encoded['attention_mask'])
+        scores = torch.matmul(curr_query_emb, neighbors_passage_embs.transpose(0, 1))
+        scores = scores.squeeze(0).detach().cpu().numpy()
+        topk = scores.argsort()[-self.args['retriever']['traversal_params']['n_neighbors']:][::-1]
+        return [neighbors[i] for i in topk]
         
     @staticmethod
-    def get_prompt(prompt, curr_path,  G):
-        return [G.nodes[curr_path[-1]]['passage']]
+    def concat_title_passage(title, passage):
+        return f"Title: {title}. {passage}"
     
     @staticmethod
     def init_mdr():
@@ -195,25 +174,25 @@ class T5_Agent(Base_Agent):
         )
         
         sources_ids = source["input_ids"].to(dtype=torch.long)
-        sources_ids = sources_ids.to(self.args['retriever']['device'])
+        sources_ids = sources_ids.to(self.args['device'])
         
-        self.model.to(self.args['retriever']['device'])
+        self.model = self.model.to(self.args['device'])
         self.model.eval()
         
         outputs = self.model.generate(input_ids=sources_ids, 
                                       max_length=self.args['retriever']['T5_params']['max_target_length'])
         output = self.tokenizer.decode(outputs[0], skip_special_tokens=True, clean_up_tokenization_spaces=True)
-        output_emb = self.emb.encode(output, device=self.args['retriever']['device']) 
+        output_emb = self.emb.encode(output, device=self.args['device']) 
         
         neighbors = list(G.neighbors(curr_path[-1]))
         
         neighbors_passages = [G.nodes[neighbor]['passage'] for neighbor in neighbors]
         
-        neighbors_emb = self.emb.encode(neighbors_passages, device=self.args['retriever']['device'])
+        neighbors_emb = self.emb.encode(neighbors_passages, device=self.args['device'])
         
         sim_scores = self.get_sim_scores(output_emb, neighbors_emb)
         
-        top_neighbors_indices = sim_scores.argsort()[-self.args['traversal_params']['n_neighbors'] : ].tolist()
+        top_neighbors_indices = sim_scores.argsort()[-self.args['retriever']['traversal_params']['n_neighbors'] : ].tolist()
         top_neighbors = [neighbors[i] for i in top_neighbors_indices]
         
         return top_neighbors
@@ -241,3 +220,23 @@ class T5_Agent(Base_Agent):
     @staticmethod
     def get_sim_scores(source_emb, neighbors_emb):
         return util.dot_score(source_emb, neighbors_emb).cpu().numpy().flatten()
+    
+
+def get_traversal_agent(args):
+    if args['retriever']['name'] == 'mistral':
+        return Mistral_Agent(args)
+        
+    elif args['retriever']['name'] == 'tfidf':
+        return TF_IDF_Agent(args)
+        
+    elif args['retriever']['name'] == 'bm25':
+        return BM25_Agent(args)
+        
+    elif args['retriever']['name'] == 'mdr':
+        return MDR_Agent(args)
+        
+    elif args['retriever']['name'] == 't5':
+        return T5_Agent(args)
+        
+    else:
+        raise ValueError("Invalid retriever name")

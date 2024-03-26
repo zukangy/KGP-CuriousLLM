@@ -1,20 +1,5 @@
 import pickle 
 from KGP.LLMs.Mistral.utils import inference
-from KGP.Traversal_agents.seed_retriever import (TF_IDF_Retriever, 
-                                                 BM25_Retriever, 
-                                                 GoldStandard_Retriever,
-                                                 No_Retriever)
-
-
-def get_docs_from_kg(G, doc_field='passage'):
-    nodes = list(G.nodes)    
-    nodes.sort()
-    
-    documents = []
-    for node in nodes:
-        documents.append(G.nodes[node][doc_field])
-        
-    return documents
 
 
 def get_titled_docs_from_kg(G, doc_field='passage', title_field='title'):
@@ -25,7 +10,7 @@ def get_titled_docs_from_kg(G, doc_field='passage', title_field='title'):
     for node in nodes:
         passage = G.nodes[node][doc_field]
         title = G.nodes[node][title_field]
-        combined_doc = "Title: " + title + "." + " " + passage
+        combined_doc = "TITLE: " + title + "." + " " + passage
         documents.append(combined_doc)
         
     return documents 
@@ -55,14 +40,16 @@ def load_graph(graph_path):
     return graph
 
 
-def get_seeding_retriever(name='tfidf'):
-    if name == 'tfidf':
-        return TF_IDF_Retriever 
-    elif name == 'bm25':
-        return BM25_Retriever
-    elif name == 'gold':
-        return GoldStandard_Retriever
-    elif name == 'none':
-        return No_Retriever
-    else:
-        raise ValueError(f"Retriever {name} not implemented")
+def generate_evidence_record(type, question, evidence, answer, supports):
+    record = {
+        "type": type,
+        "question": question,
+        "evidence": evidence,
+        "answer": answer,
+        "supports": supports
+    }
+    return record
+
+
+def parse_evidence_string(evidence):
+    return ''.join(evidence.split('.')[1:]).strip() + '.'

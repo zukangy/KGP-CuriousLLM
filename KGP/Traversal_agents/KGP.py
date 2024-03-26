@@ -22,7 +22,7 @@ def get_supporting_evidence(prompt, G, init_retriever, retriever, args, verbose=
         # Add the visited node to the set
         visited.add(curr_path[-1])
         
-        if depth < args['traversal_params']['n_hop']:
+        if depth < args['retriever']['traversal_params']['n_hop']:
             top_neighbors = retriever.get_top_k_neighbors(G, curr_path, prompt)
             
             for neighbor in top_neighbors:
