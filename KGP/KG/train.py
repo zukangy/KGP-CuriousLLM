@@ -1,5 +1,7 @@
 import os 
 from tqdm import tqdm 
+import random 
+import yaml
 import numpy as np 
 import json 
 import torch 
@@ -14,11 +16,15 @@ def run(data, model, tokenizer, args):
     
     # Save a copy of the raw data
     # Define run_id in case of overwriting
-    os.makedirs(os.path.join(args['root_dir'], 'DATA/KG', f"emb_{args['model']['run_id']}"), exist_ok=True)
-    with open(os.path.join(args['root_dir'], 'DATA/KG', f"emb_{args['model']['run_id']}", 'evidence_passages.json'), 'w') as f:
+    os.makedirs(os.path.join(args['root_dir'], 'DATA/KG/emb', f"emb_{args['model']['run_id']}"), exist_ok=True)
+    with open(os.path.join(args['root_dir'], 'DATA/KG/emb', f"emb_{args['model']['run_id']}", 'passages.json'), 'w') as f:
         json.dump(data, f, indent=4)
-    print('Raw data saved...')    
+    print('Raw data saved...')  
     
+    # Save the config file   
+    with open(os.path.join(args['root_dir'], 'DATA/KG/emb', f"emb_{args['model']['run_id']}", 'config.yml'), 'w') as f:
+        yaml.dump(args, f)
+        
     # Make sure the position of the data matches the passage_id
     dataset = DocumentsDataset(data)
     data_loader = DataLoader(dataset, batch_size=args['model']['batch_size'], shuffle=False)
@@ -60,7 +66,7 @@ def run(data, model, tokenizer, args):
             temp_embs = np.concatenate(embs, axis=0)
             if cp_embs is not None:
                 temp_embs = np.concatenate([cp_embs, temp_embs], axis=0)
-            np.save(os.path.join(args['root_dir'], 'DATA/KG', f"emb_{args['model']['run_id']}", f'passage_embs_{len(temp_embs)}.npy'), temp_embs)
+            np.save(os.path.join(args['root_dir'], 'DATA/KG/emb', f"emb_{args['model']['run_id']}", f'passage_embs_{len(temp_embs)}.npy'), temp_embs)
             print(f"Checkpoint saved at {len(temp_embs)}...")
         
     final_embs = np.concatenate(embs, axis=0)
@@ -68,6 +74,9 @@ def run(data, model, tokenizer, args):
         final_embs = np.concatenate([cp_embs, final_embs], axis=0)
         
     print(f"{len(final_embs)} batches processed. (Total: {len(data_loader)})")
+    
     # Save the embeddings
-    np.save(os.path.join(args['root_dir'], 'DATA/KG', f"emb_{args['model']['run_id']}", 'passage_embs.npy'), final_embs)
+    np.save(os.path.join(args['root_dir'], 'DATA/KG/emb', f"emb_{args['model']['run_id']}", 'passage.npy'), final_embs)
+    
+    
     return

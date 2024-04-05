@@ -16,7 +16,7 @@ if __name__ == '__main__':
         lora_rank=args['model']['lora_rank'],
         lora_layer=args['model']['lora_layers'])
     
-    limit = 50
+    limit = 1000000
     limit = min(limit, len(data))
     
     resps = []

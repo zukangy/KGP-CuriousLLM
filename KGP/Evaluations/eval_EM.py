@@ -7,7 +7,9 @@ from sentence_transformers import SentenceTransformer
 DEVICE = "mps"
 
 if __name__=="__main__":
-    with open('./DATA/KG/evidence_100/mistral_agent/evidence.json', 'r') as f:
+    name = 'mdr_no_agent'
+    
+    with open(f'./DATA/KG/evidence/hotpot_evidence_100/{name}/evidence.json', 'r') as f:
         data = json.load(f)
         
     # Load sentence transformer
@@ -35,7 +37,7 @@ if __name__=="__main__":
             elif type == 'bridge':
                 total_bridge_support += 1
             
-            if max(sim_score) > 0.8:
+            if max(sim_score) > 0.9:
                 correct_supports += 1
                 
                 if type == 'comparison':
@@ -44,6 +46,6 @@ if __name__=="__main__":
                     correct_bridge += 1
             
     print(f"Total supports: {total_supports} | Correct supports: {correct_supports} | EM: {(correct_supports / total_supports):.4f}")
-    print(f"Total comparison supports: {total_comparison_support} | Correct comparison supports: {correct_comparison} | EM: {(correct_comparison / total_comparison_support):.4f}")
     print(f"Total bridge supports: {total_bridge_support} | Correct bridge supports: {correct_bridge} | EM: {(correct_bridge / total_bridge_support):.4f}")
+    print(f"Total comparison supports: {total_comparison_support} | Correct comparison supports: {correct_comparison} | EM: {(correct_comparison / total_comparison_support):.4f}")
     

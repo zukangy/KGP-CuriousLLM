@@ -1,7 +1,7 @@
 root_dir: "."
-dataset: "DATA/HotpotQA/MDR/test_docs.json"
+dataset: "DATA/2WikiMQA/test_docs.json"
 model:
-  run_id: '1'
+  run_id: '2wiki'
   base_model: "deepset/tinyroberta-squad2"
   from_checkpoint: "models/checkpoint_tinyRo/MDR/HotpotQA/1/2024-03-15_00-39-31/best_model.pt"
   batch_size: 1

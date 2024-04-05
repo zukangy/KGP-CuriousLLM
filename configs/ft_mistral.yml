@@ -22,4 +22,4 @@ model:
   max_token_len: 50
 checkpoint:
   resume: True
-  resume_adapter_file: "models/mistral/ft_mistral_quantized_8_bit_2024-03-15_21-52-12/cp_mistral_quantized_8_bit/adapters.npz"
+  resume_adapter_file: "models/mistral/ft_mistral_quantized_8_bit_2024-03-16_01-00-21/cp_mistral_quantized_8_bit/adapters.npz"

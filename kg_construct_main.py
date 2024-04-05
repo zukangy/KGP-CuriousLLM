@@ -23,16 +23,16 @@ if __name__=="__main__":
     G = get_kg_graph_gpu(embs=embs, **args['algo_params'])
     
     # Specified run_id to avoid overwriting the previous graph
-    os.makedirs(os.path.join(args['root_dir'], f"DATA/KG/graph_{args['run_id']}"), exist_ok=True)
+    os.makedirs(os.path.join(args['root_dir'], f"DATA/KG/graphs/graph_{args['run_id']}"), exist_ok=True)
     
     passages_data = json.load(open(os.path.join(args['root_dir'], args['passages_file'])))
     
     updated_G = add_node_features(G, passages_data, embs)
     
     # Save the updated graph into pickle file
-    with open(os.path.join(args['root_dir'], f"DATA/KG/graph_{args['run_id']}", "graph.gpickle"), 'wb') as f:
+    with open(os.path.join(args['root_dir'], f"DATA/KG/graphs/graph_{args['run_id']}", "graph.gpickle"), 'wb') as f:
         pickle.dump(updated_G, f, pickle.HIGHEST_PROTOCOL)
     
     # Save the config file    
-    with open(os.path.join(args['root_dir'], f"DATA/KG/graph_{args['run_id']}", 'config.yml'), 'w') as f:
+    with open(os.path.join(args['root_dir'], f"DATA/KG/graphs/graph_{args['run_id']}", 'config.yml'), 'w') as f:
         yaml.dump(args, f, sort_keys=False)
