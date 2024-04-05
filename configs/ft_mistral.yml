@@ -1,16 +1,16 @@
 root_dir: '.'
 models_dir: 'models/mistral'
-dataset: "DATA/T5_traversal_agent/mistral"
+dataset: "DATA/Mistral/mistral"
 model:
   model_name: "mistral_quantized_8_bit"
   quantized_model_path: "models/mistral/mistral_quantized_8_bit"
   train: True 
   max_tokens: 50
-  lora_rank: 16
+  lora_rank: 32
   lora_layers: 32
   learning_rate: 0.00001
   steps_per_eval: 100
-  epochs: 1000
+  epochs: 2000
   batch_size: 8
   steps_per_report: 25
   save_every: 50
@@ -21,5 +21,5 @@ model:
   temperature: 0.3
   max_token_len: 50
 checkpoint:
-  resume: False
-  resume_adapter_file: 
+  resume: True
+  resume_adapter_file: "models/mistral/ft_mistral_quantized_8_bit_2024-03-16_01-00-21/cp_mistral_quantized_8_bit/adapters.npz"

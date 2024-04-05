@@ -99,7 +99,6 @@ def add_node_features(G, passages_data, embs):
             node_features = {
                 'title': passage_dict['title'],
                 'passage': passage_dict['passage'],
-                'question_id': passage_dict['question_id'],
                 'emb': embs[node]
             }
             G.nodes[node].update(node_features)

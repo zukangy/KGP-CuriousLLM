@@ -18,6 +18,7 @@ if __name__ == "__main__":
     tokenizer, config = load_tokenizer(model_name=args['model']['base_model'])
     
     model = Retriever_inf(config, base_model=args['model']['base_model'])
+    
     model_checkpoint = torch.load(os.path.join(args['root_dir'], args['model']['from_checkpoint']))
     print("Loading model from checkpoint...")
     model.load_state_dict(model_checkpoint['model_state_dict'])

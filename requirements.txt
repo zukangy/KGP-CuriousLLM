@@ -8,3 +8,4 @@ transformers
 mlx
 networkx 
 openai 
+sentence-transformers

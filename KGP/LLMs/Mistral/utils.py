@@ -148,12 +148,15 @@ def generate(
         yield y
         
         
-def inference(model, prompt, tokenizer, temp: float = 0.3, 
-             max_token_len: int = 100, parse_template: bool = True,
-             verbose: bool = 0):
+def inference(model, prompt, tokenizer, temp: float = 0.3, max_token_len: int = 100, 
+              parse_template: bool = True, verbose: bool = 0):
+    
     if parse_template:
+        instruction = """You are a critical thinker and like to ask questions. 
+        Please provide only the follow-up question without additional information.
+        Please think carefully and provide a follow-up question that is relevant to the previous conversation."""
         prompt = [
-            {"role": "user", "content": "You are a critical thinker and like to ask questions."},
+            {"role": "user", "content": instruction},
             {"role": "assistant", "content": prompt},
         ]
         prompt = tokenizer.apply_chat_template(prompt, tokenize=False)

@@ -1,26 +1,32 @@
-import json 
+from tqdm import tqdm
+import pandas as pd
 from torch.utils.data import Dataset
 
 
 def parse_data(data):
     print("Parsing raw data...")
+    titles = []
     passages = []
-    p_id = 0 
-    for q_id, record in enumerate(data):
+    for record in tqdm(data):
         title_chunks = record['title_chunks']
-        
         for chunk in title_chunks:
-            title = chunk[0].strip()
-            passage = chunk[1].strip()
-            passages.append({
-                'question_id': q_id,
-                'passage_id': p_id,
-                'title': title,
-                'passage': passage
-                }) 
-            p_id += 1
+            titles.append(chunk[0].strip())
+            passages.append(chunk[1].strip())
+
+    data_dict = {
+        'title': titles,
+        'passage': passages
+    }
+    
+    data_df = pd.DataFrame(data_dict)
+    
+    # Remove duplicated passages
+    data_df.drop_duplicates(subset=['passage'], ignore_index=True, inplace=True)
+    data_df['passage_id'] = data_df.index
+    
+    data = data_df.to_dict(orient='records')
     print('Finished...')
-    return passages
+    return data
 
 
 class DocumentsDataset(Dataset):

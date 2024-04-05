@@ -1,11 +1,11 @@
 root_dir: "."
 method: 'gpu'
-run_id: '2'
+run_id: '2wiki'
 algo_params:
-  n_neighbors: 10
+  n_neighbors: 20
   metric: "cosine"
   batch_size: 100
   device: "mps"
-emb_file: "DATA/KG/emb_2/passage_embs.npy"
-passages_file: "DATA/KG/emb_2/raw_data.json"
+emb_file: "DATA/KG/emb/emb_2wiki/passage_embs.npy"
+passages_file: "DATA/KG/emb/emb_2wiki/passages.json"
 

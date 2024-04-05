@@ -1,13 +1,14 @@
 import os  
 import json 
+from tqdm import tqdm
 
-from KGP.LLMs.Mistral.utils import load_lora_model, generate
+from KGP.LLMs.Mistral.utils import load_lora_model, inference
 from KGP.LLMs.Mistral.quantize_mistral_mlx import load_config
 
 
 if __name__ == '__main__':
     args = load_config('./configs/ft_mistral.yml')
-    data = json.load(open('DATA/T5_traversal_agent/mistral/test.jsonl', 'r'))
+    data = json.load(open('DATA/Mistral/mistral/test.jsonl', 'r'))
     
     model, tokenizer = load_lora_model(
         model=args['model']['quantized_model_path'],
@@ -15,21 +16,28 @@ if __name__ == '__main__':
         lora_rank=args['model']['lora_rank'],
         lora_layer=args['model']['lora_layers'])
     
-    # prompt = "Question: What role could Christian Daniel Claus have had during the Revolution? \n Evidence: Christian Daniel Claus (1727\u20131787) was a Commissioner of Indian Affairs and a prominent Loyalist during the American Revolution. \n Follow-up Question: "
-    limit = 10
-    for i, d in enumerate(data[:limit]):
+    limit = 1000000
+    limit = min(limit, len(data))
+    
+    resps = []
+    for d in tqdm(data[:limit], total=limit):
         text = d['text']
         try:
             q, e, f = text.split('\n')
             prompt = q + ' ' + e
-            print(f"Prompt {i}:" )
-            print(f"Question: {q}" )
-            print(f"Evidence: {e}" )
-            print(f"Follow-up Question {i}: {f}" )
-            pred = generate(model, prompt, tokenizer, temp=args['model']['temperature'], 
+            pred = inference(model, prompt, tokenizer, temp=args['model']['temperature'], 
                     max_token_len=args['model']['max_token_len'], parse_template=True)
-            print("=========>")
-            print(f"Prediction {i}: {pred}" )
-            print("=========>")
+            
+            resps.append(
+                {
+                    'question': q,
+                    'evidence': e,
+                    'follow-up': f,
+                    'response': pred
+                }
+            )
         except:
-            continue
+            continue 
+    
+    with open(os.path.join(args['root_dir'], 'DATA/Mistral/test_responses.jsonl'), 'w') as f:
+        json.dump(resps, f, indent=4)

@@ -1,18 +1,19 @@
 import pickle 
 from KGP.LLMs.Mistral.utils import inference
-from KGP.KG.mdr_encoder import Retriever_inf
 
 
-def get_docs_from_kg(G, doc_field='passage'):
-    
+def get_titled_docs_from_kg(G, doc_field='passage', title_field='title'):
     nodes = list(G.nodes)    
     nodes.sort()
     
     documents = []
     for node in nodes:
-        documents.append(G.nodes[node][doc_field])
+        passage = G.nodes[node][doc_field]
+        title = G.nodes[node][title_field]
+        combined_doc = "TITLE: " + title + "." + " " + passage
+        documents.append(combined_doc)
         
-    return documents
+    return documents 
 
 
 class Mistral_Inference:
@@ -37,3 +38,18 @@ def load_graph(graph_path):
     with open(graph_path, 'rb') as f:
         graph = pickle.load(f)
     return graph
+
+
+def generate_evidence_record(type, question, evidence, answer, supports):
+    record = {
+        "type": type,
+        "question": question,
+        "evidence": evidence,
+        "answer": answer,
+        "supports": supports
+    }
+    return record
+
+
+def parse_evidence_string(evidence):
+    return ''.join(evidence.split('.')[1:]).strip() + '.'
