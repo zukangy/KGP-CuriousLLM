@@ -72,7 +72,7 @@ def train(model, train_set, val_set, optimizer, loss, tokenizer, args):
                 print('Starting validation')
                 stop = time.perf_counter()
                 val_loss = evaluate(
-                    model, val_set, loss, tokenizer, args['model']['batch_size'], args['model']['num_batches']
+                    model, val_set, loss, tokenizer, args['model']['batch_size']
                 )
                 print(f"Step {epoch + 1} | Val Loss {val_loss:.3f} | Val took {(time.perf_counter() - stop):.3f}s")
 

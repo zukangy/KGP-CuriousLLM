@@ -16,7 +16,7 @@ if __name__ == '__main__':
         lora_rank=args['model']['lora_rank'],
         lora_layer=args['model']['lora_layers'])
     
-    limit = 1000000
+    limit = 100
     limit = min(limit, len(data))
     
     resps = []
@@ -25,7 +25,10 @@ if __name__ == '__main__':
         try:
             q, e, f = text.split('\n')
             prompt = q + ' ' + e
-            pred = inference(model, prompt, tokenizer, temp=args['model']['temperature'], 
+            
+            temperature = args['model']['temperature']
+            top_p = args['model']['top_p']
+            pred = inference(model, prompt, tokenizer, temp=temperature, top_p=top_p,
                     max_token_len=args['model']['max_token_len'], parse_template=True)
             
             resps.append(
@@ -39,5 +42,5 @@ if __name__ == '__main__':
         except:
             continue 
     
-    with open(os.path.join(args['root_dir'], 'DATA/Mistral/test_responses.jsonl'), 'w') as f:
+    with open(os.path.join(args['root_dir'], 'DATA/Mistral/test_responses_2.jsonl'), 'w') as f:
         json.dump(resps, f, indent=4)
