@@ -55,5 +55,5 @@ def split_raw_dataset(raw_data_path, root_dir='.', valid_perc=0.1, test_perc=0.2
         
         
 if __name__ == '__main__':
-    raw_data_path = './cp_gpt_question_instruction.json'
-    split_raw_dataset(raw_data_path)
+    raw_data_path = './DATA/Mistral/gpt_question_instruction.json'
+    split_raw_dataset(raw_data_path, valid_perc=0.01, test_perc=0.04)

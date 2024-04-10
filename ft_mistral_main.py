@@ -62,6 +62,7 @@ if __name__ == "__main__":
                 f"Adapter file {args['test_adapter_file']} missing. "
                 "Use --train to learn and save the adapters.npz."
             )
+            
         model.load_weights(args['test_adapter_file'], strict=False)
 
         print("Testing")
@@ -72,7 +73,6 @@ if __name__ == "__main__":
             mistral_loss,
             tokenizer,
             args['model']['batch_size'],
-            num_batches=args.test_batches,
         )
         test_ppl = math.exp(test_loss)
 

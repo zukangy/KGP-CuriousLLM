@@ -31,15 +31,23 @@ class Mistral_Agent(Base_Agent):
         self.emb = self.init_sentence_transformer(self.args)
     
     def get_top_k_neighbors(self, G, curr_path, prompt):
-        question = self.retriever.get_question(self.get_prompt(prompt, curr_path, G))
+        new_prompt = self.get_prompt(prompt, curr_path, G)
+        question = self.retriever.get_question(new_prompt)
+        
+        # If the question is NA, means evidence is sufficient, so return an empty list
+        if "NA" in question and len(question) < 30: # e.g. len("9 Follow-up Question: 'NA'") = 26
+            top_neighbors = []
+            return top_neighbors
+        
+        # A basic check to remove the 'Question:' prefix
+        if 'Question:' in question:
+            question = ''.join(question.split('Question:')[1:]).strip()
+        
         question_emb = self.emb.encode(question, device=self.args['device'])
         
         neighbors = list(G.neighbors(curr_path[-1]))
         
-        if self.args['titled']:
-            neighbors_passages = [f"Title: {G.nodes[neighbor]['title']}. {G.nodes[neighbor]['passage']}" for neighbor in neighbors]
-        else:
-            neighbors_passages = [G.nodes[neighbor]['passage'] for neighbor in neighbors]
+        neighbors_passages = [f"Title: {G.nodes[neighbor]['title']}. {G.nodes[neighbor]['passage']}" for neighbor in neighbors]
             
         neighbors_emb = self.emb.encode(neighbors_passages, device=self.args['device'])
         
@@ -69,8 +77,13 @@ class Mistral_Agent(Base_Agent):
         model, tokenizer = load_lora_model(model=model_path, adapter_file=adapter_path, 
                                             lora_rank=lora_rank, lora_layer=lora_layer)
         temp = args['retriever']['inference_params']['temp']
+        top_p = args['retriever']['inference_params']['top_p']
         max_token_len = args['retriever']['inference_params']['max_token_len']
-        return Mistral_Inference(model, tokenizer, temp, max_token_len, parse_template)
+        return Mistral_Inference(model, tokenizer, 
+                                 temp=temp if temp else 1.0, 
+                                 top_p=top_p if top_p else 1.0, 
+                                 max_token_len=max_token_len, 
+                                 parse_template=parse_template)
     
     @staticmethod
     def init_sentence_transformer(args):

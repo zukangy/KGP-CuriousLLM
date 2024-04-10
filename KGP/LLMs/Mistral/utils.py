@@ -117,7 +117,7 @@ def load_lora_model(model: str, adapter_file: str = None, lora_rank: int = 8,
     return model, tokenizer
 
 
-def generate(
+def generate1(
     prompt: mx.array, model: nn.Module, temp: float = 0.0
 ) -> Generator[mx.array, None, None]:
     """
@@ -148,7 +148,61 @@ def generate(
         yield y
         
         
-def inference(model, prompt, tokenizer, temp: float = 0.3, max_token_len: int = 100, 
+def generate2(
+    prompt: mx.array, model: nn.Module, temp: float = 0.0,
+    top_p: float = 1.0
+) -> Generator[mx.array, None, None]:
+    """
+    Generate text based on the given prompt and model.
+
+    Args:
+        prompt (mx.array): The input prompt.
+        model (nn.Module): The model to use for generation.
+        temp (float): The temperature for sampling. If temp is 0, use max sampling.
+        top_p (float): The nucleus sampling parameter.
+    Yields:
+        mx.array: The generated text.
+    """
+
+    def sample(logits: mx.array) -> mx.array:
+        softmax_logits = mx.softmax(logits)
+        
+        if temp == 0:
+            token = mx.argmax(softmax_logits, axis=-1)
+        else: 
+            if top_p > 0 and top_p < 1.0:
+                if (
+                    logits.dtype == mx.bfloat16
+                ):  # workdaround for unable to load kernel contiguous_scan_inclusive_sum_bfloat16_bfloat16
+                    logits = logits.astype(mx.float32)
+                probs = mx.softmax(logits / temp, axis=-1)
+
+                sorted_probs = mx.sort(probs)[::-1]
+                sorted_indices = mx.argsort(probs)[::-1]
+                cumulative_probs = mx.cumsum(sorted_probs, axis=-1)
+
+                top_probs = mx.where(
+                    cumulative_probs > 1 - top_p,
+                    sorted_probs,
+                    mx.zeros_like(sorted_probs),
+                )
+                sorted_token = mx.random.categorical(mx.log(top_probs))
+                token = sorted_indices.squeeze(0)[sorted_token]
+            else:
+                token = mx.random.categorical(logits * (1 / temp))
+            
+            return token
+
+    y = prompt
+    cache = None
+    while True:
+        logits, cache = model(y[None], cache=cache)
+        logits = logits[:, -1, :]
+        y = sample(logits)
+        yield y
+        
+        
+def inference(model, prompt, tokenizer, temp: float = 1.0, top_p: float = 1.0, max_token_len: int = 100, 
               parse_template: bool = True, verbose: bool = 0):
     
     if parse_template:
@@ -166,7 +220,7 @@ def inference(model, prompt, tokenizer, temp: float = 0.3, max_token_len: int = 
 
     tokens = []
     skip = 0
-    pred_token_seq = generate(prompt, model, temp=temp)
+    pred_token_seq = generate2(prompt, model, temp=temp, top_p=top_p)
     for token, n in zip(pred_token_seq, range(max_token_len)):
         if token == tokenizer.eos_token_id:
             break
@@ -248,13 +302,10 @@ def iterate_batches(dset, tokenizer, batch_size, train=False):
             break
         
         
-def evaluate(model, dataset, loss, tokenizer, batch_size, num_batches):
+def evaluate(model, dataset, loss, tokenizer, batch_size):
     all_losses = []
     ntokens = 0
-    for _, batch in tqdm(zip(
-        range(num_batches),
-        iterate_batches(dataset, tokenizer, batch_size),
-    ), total=num_batches):
+    for batch in tqdm(iterate_batches(dataset, tokenizer, batch_size)):
         losses, toks = loss(model, *batch)
         all_losses.append((losses * toks).item())
         ntokens += toks.item()

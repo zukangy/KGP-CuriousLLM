@@ -5,21 +5,20 @@ model:
   model_name: "mistral_quantized_8_bit"
   quantized_model_path: "models/mistral/mistral_quantized_8_bit"
   train: True 
-  max_tokens: 50
   lora_rank: 32
   lora_layers: 32
   learning_rate: 0.00001
-  steps_per_eval: 100
-  epochs: 2000
-  batch_size: 8
-  steps_per_report: 25
+  steps_per_eval: 250
+  epochs: 1500
+  batch_size: 10
+  steps_per_report: 50
   save_every: 50
   seed: 1028
   test: False
   test_adapter_file: 
-  num_batches: 50
-  temperature: 0.3
+  temperature: 0.6
+  top_p: 0.85
   max_token_len: 50
 checkpoint:
   resume: True
-  resume_adapter_file: "models/mistral/ft_mistral_quantized_8_bit_2024-03-16_01-00-21/cp_mistral_quantized_8_bit/adapters.npz"
+  resume_adapter_file: "models/mistral/ft_mistral_quantized_8_bit_2024-04-05_21-28-35/cp_mistral_quantized_8_bit/adapters.npz"

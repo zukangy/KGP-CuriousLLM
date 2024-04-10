@@ -1,5 +1,3 @@
-# Taken from mlx-example. Quantie the Mistral model using the mlx library.
-
 import os 
 import yaml 
 from mlx_lm.utils import convert
@@ -12,7 +10,7 @@ def load_config(config_path):
 def convert_(args):
     model = args['model_name']
     root_dir = args['root_dir']
-    save_path = args['mlx_path']
+    save_path = args['save_path']
     
     if args['quantize']:
         quantize = args['quantize']
@@ -27,11 +25,5 @@ def convert_(args):
         convert(model, save_path, quantize, q_group_size, q_bits, dtype)
     else:
         print('No quantization chosen...')
-
-
-if __name__ == "__main__":
-    args = load_config('./configs/quantized_mistral_config.yml')
-    
-    convert_(args)
     
 

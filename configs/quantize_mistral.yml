@@ -1,6 +1,6 @@
 model_name: "mistralai/Mistral-7B-Instruct-v0.2"
 root_dir: "."
-mlx_path: "models/mistral"
+save_path: "models/mistral"
 quantize: True
 q_group_size: 64
 q_bits: 8

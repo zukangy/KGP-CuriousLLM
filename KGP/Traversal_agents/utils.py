@@ -17,10 +17,12 @@ def get_titled_docs_from_kg(G, doc_field='passage', title_field='title'):
 
 
 class Mistral_Inference:
-    def __init__(self, model, tokenizer, temp, max_token_len, parse_template=True):
+    def __init__(self, model, tokenizer, temp=1.0, top_p=1.0, max_token_len=100,
+                 parse_template=True):
         self.model = model
         self.tokenizer = tokenizer
         self.temp = temp
+        self.top_p = top_p
         self.max_token_len = max_token_len
         self.parse_template = parse_template
     
@@ -29,6 +31,7 @@ class Mistral_Inference:
                          prompt=prompt, 
                          tokenizer=self.tokenizer, 
                          temp=self.temp, 
+                         top_p=self.top_p,
                          max_token_len=self.max_token_len, 
                          parse_template=self.parse_template,
                          verbose=verbose)

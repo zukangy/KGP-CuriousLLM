@@ -39,6 +39,6 @@ def get_supporting_evidence(prompt, G, init_retriever, retriever, args, verbose=
         print("Number of nodes visited: ", len(visited))
     
     if visited:
-        return [G.nodes[n]['passage'] for n in visited]
+        return [f"Title: {G.nodes[n]['title']}. Evidence: {G.nodes[n]['passage']}" for n in visited]
     return
     
