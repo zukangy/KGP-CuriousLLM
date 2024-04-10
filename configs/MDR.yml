@@ -20,4 +20,4 @@ do_train: True
 checkpoint_root_dir: "checkpoint_tinyRo"
 checkpoint_id: 1
 checkpoint_step: 250
-from_checkpoint: "models/checkpoint_tinyRo/MDR/HotpotQA/1/2024-03-15_00-39-31/model.pt"
+from_checkpoint:

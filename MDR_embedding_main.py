@@ -1,4 +1,4 @@
-# This script is used to generate the embeddings for the documents in the dataset using the MDR model.
+# This script is used to generate the embeddings for the documents in test_doc.json using the MDR model.
 
 import os 
 import torch 
@@ -12,7 +12,8 @@ from KGP.LLMs.Mistral.quantize_mistral_mlx import load_config
 
 
 if __name__ == "__main__":
-    args = load_config('configs/MDR_embedding.yml')
+    args = load_config('./configs/mdr_embedding/mdr_2wiki_embedding.yml')
+    
     raw_documents_data = json.load(open(os.path.join(args['root_dir'], args['dataset']), 'r'))
     
     tokenizer, config = load_tokenizer(model_name=args['model']['base_model'])

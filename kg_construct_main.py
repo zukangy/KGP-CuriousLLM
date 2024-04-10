@@ -15,7 +15,7 @@ from KGP.LLMs.Mistral.quantize_mistral_mlx import load_config
 
 
 if __name__=="__main__":
-    args = load_config('./configs/kg_construct.yml')
+    args = load_config('./configs/kg_construct/2wiki_kg_construct.yml')
     
     # Load the embeddings, the position in the array should match the node index as well as the passage_id
     embs = np.load(os.path.join(args['root_dir'], args['emb_file']))

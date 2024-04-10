@@ -15,7 +15,7 @@ from KGP.LLMs.Mistral.train import train
 
 
 if __name__ == "__main__":
-    args = load_config('./configs/ft_mistral.yml')
+    args = load_config('./configs/mistral/ft_mistral.yml')
     
     # Create model folder if it doesn't exist
     os.makedirs(os.path.join(args['root_dir'], args['models_dir']), exist_ok=True)

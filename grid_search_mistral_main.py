@@ -32,7 +32,7 @@ def process_data(model, tokenizer, data, temp, top_p, max_token_len, output_dir,
         json.dump(responses, f, indent=4)
 
 if __name__ == '__main__':
-    args = load_config('./configs/ft_mistral.yml')
+    args = load_config('./configs/mistral/ft_mistral.ymll')
     data = json.load(open('DATA/Mistral/mistral/test.jsonl', 'r'))
     data_dir = os.path.join(args['root_dir'], 'DATA/Mistral/test_followups')
     os.makedirs(data_dir, exist_ok=True)

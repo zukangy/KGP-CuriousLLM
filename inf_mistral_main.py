@@ -7,7 +7,7 @@ from KGP.LLMs.Mistral.quantize_mistral_mlx import load_config
 
 
 if __name__ == '__main__':
-    args = load_config('./configs/ft_mistral.yml')
+    args = load_config('./configs/mistral/ft_mistral.yml')
     data = json.load(open('DATA/Mistral/mistral/test.jsonl', 'r'))
     
     checkpoint = args['checkpoint']['resume_adapter_file']  
@@ -22,7 +22,7 @@ if __name__ == '__main__':
         model, tokenizer, _ = load(args['model']['quantized_model_path'])
         tokenizer.model_max_length = 2048
     
-    limit = 100
+    limit = 10000
     limit = min(limit, len(data))
     
     resps = []
@@ -48,5 +48,8 @@ if __name__ == '__main__':
         except:
             continue 
     
-        with open(os.path.join(args['root_dir'], 'DATA/Mistral/test_responses_1500.json'), 'w') as f:
+        save_path = os.path.join(args['root_dir'], 'DATA/Mistral')
+        os.makedirs(save_path, exist_ok=True)
+        
+        with open(os.path.join(save_path, 'test_responses.json'), 'w') as f:
             json.dump(resps, f, indent=4)
