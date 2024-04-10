@@ -4,19 +4,20 @@ dataset: "2wiki"
 question_dataset: "DATA/2WikiMQA/indexed_test_docs.json"
 device: "mps"
 init_retriever:
-  name: 'mdr'
-  no_traversal: True
-  no_traversal_topk: 6
+  name: 'tfidf'
+  no_traversal: False
+  no_traversal_topk: 7
   topk: 5
 retriever:
-  name: "t5"
+  name: "mdr"
   model: "models/mistral/mistral_quantized_8_bit"
-  adapter: "models/mistral/ft_mistral_quantized_8_bit_2024-03-16_01-00-21/cp_mistral_quantized_8_bit/adapters.npz"
+  adapter: "models/mistral/ft_mistral_quantized_8_bit_2024-04-05_21-28-35/cp_mistral_quantized_8_bit/adapters.npz"
   model_params:
     lora_rank: 32
     lora_layers: 32
   inference_params:
-    temp: 0.3
+    temp: 0.6
+    top_p: 0.85
     max_token_len: 50
   T5_params:
     model_path: "models/checkpoints_t5/reason_t5-large"
@@ -29,7 +30,7 @@ KG: "DATA/KG/graphs/graph_2wiki/graph.gpickle"
 emb_model: 
   model: "sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
 checkpoint:
-  id: "mdr_no_agent"
+  id: "mdr_title_agent"
   resume: False
   save_every: 1
   save_dir: "DATA/KG/evidence/wiki_evidence_100"

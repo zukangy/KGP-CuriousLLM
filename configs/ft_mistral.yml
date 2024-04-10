@@ -5,7 +5,6 @@ model:
   model_name: "mistral_quantized_8_bit"
   quantized_model_path: "models/mistral/mistral_quantized_8_bit"
   train: True 
-  max_tokens: 50
   lora_rank: 32
   lora_layers: 32
   learning_rate: 0.00001
@@ -22,4 +21,4 @@ model:
   max_token_len: 50
 checkpoint:
   resume: True
-  resume_adapter_file: "models/mistral/ft_mistral_quantized_8_bit_2024-04-05_18-58-07/cp_mistral_quantized_8_bit/adapters.npz"
+  resume_adapter_file: "models/mistral/ft_mistral_quantized_8_bit_2024-04-05_21-28-35/cp_mistral_quantized_8_bit/adapters.npz"

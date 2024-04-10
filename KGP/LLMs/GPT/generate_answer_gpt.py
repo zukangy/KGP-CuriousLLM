@@ -28,6 +28,7 @@ def pipeline(data, save_path):
     - Limit your answer to no more than 6 words, focusing on the essential information requested.
     - If the provided contexts do not contain enough information to answer the question, respond with "Information not available" or "Cannot determine from provided context."
     - Do not include any additional tokens, explanations, or information beyond the direct answer.
+    - Carefully reason through the question and contexts if the question involes time. 
 
     QUESTION: {question}
     CONTEXT: {context}
@@ -80,8 +81,8 @@ def pipeline(data, save_path):
     
 
 if __name__ == '__main__':    
-    data_path = "./DATA/KG/evidence/hotpot_evidence_100/none/evidence.json"
-    save_path = "./DATA/KG/answers/hotpot_answers_gpt/none_responses.json"
+    data_path = "./DATA/KG/evidence/wiki_evidence_100/mdr_title_agent/evidence.json"
+    save_path = "./DATA/KG/answers/wiki_answers_gpt/mdr_title_agent_responses.json"
     data = load_json(data_path)
     
     responses = pipeline(data, save_path)

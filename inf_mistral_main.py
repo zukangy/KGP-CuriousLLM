@@ -2,7 +2,7 @@ import os
 import json 
 from tqdm import tqdm
 
-from KGP.LLMs.Mistral.utils import load_lora_model, inference
+from KGP.LLMs.Mistral.utils import load_lora_model, load, inference
 from KGP.LLMs.Mistral.quantize_mistral_mlx import load_config
 
 
@@ -10,11 +10,17 @@ if __name__ == '__main__':
     args = load_config('./configs/ft_mistral.yml')
     data = json.load(open('DATA/Mistral/mistral/test.jsonl', 'r'))
     
-    model, tokenizer = load_lora_model(
-        model=args['model']['quantized_model_path'],
-        adapter_file=args['checkpoint']['resume_adapter_file'],
-        lora_rank=args['model']['lora_rank'],
-        lora_layer=args['model']['lora_layers'])
+    checkpoint = args['checkpoint']['resume_adapter_file']  
+    if checkpoint:
+        model, tokenizer = load_lora_model(
+            model=args['model']['quantized_model_path'],
+            adapter_file=checkpoint,
+            lora_rank=args['model']['lora_rank'],
+            lora_layer=args['model']['lora_layers'])
+    else:
+        # Load the quantized model without lora => raw model 
+        model, tokenizer, _ = load(args['model']['quantized_model_path'])
+        tokenizer.model_max_length = 2048
     
     limit = 100
     limit = min(limit, len(data))
@@ -42,5 +48,5 @@ if __name__ == '__main__':
         except:
             continue 
     
-    with open(os.path.join(args['root_dir'], 'DATA/Mistral/test_responses_2.jsonl'), 'w') as f:
-        json.dump(resps, f, indent=4)
+        with open(os.path.join(args['root_dir'], 'DATA/Mistral/test_responses_1500.json'), 'w') as f:
+            json.dump(resps, f, indent=4)

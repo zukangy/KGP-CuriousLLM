@@ -25,11 +25,5 @@ def convert_(args):
         convert(model, save_path, quantize, q_group_size, q_bits, dtype)
     else:
         print('No quantization chosen...')
-
-
-if __name__ == "__main__":
-    args = load_config('./configs/quantized_mistral_config.yml')
-    
-    convert_(args)
     
 

@@ -202,7 +202,7 @@ def generate2(
         yield y
         
         
-def inference(model, prompt, tokenizer, temp: float = 0.3, top_p: float = 1.0, max_token_len: int = 100, 
+def inference(model, prompt, tokenizer, temp: float = 1.0, top_p: float = 1.0, max_token_len: int = 100, 
               parse_template: bool = True, verbose: bool = 0):
     
     if parse_template:
