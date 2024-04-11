@@ -52,7 +52,3 @@ def generate_evidence_record(type, question, evidence, answer, supports):
         "supports": supports
     }
     return record
-
-
-def parse_evidence_string(evidence):
-    return ''.join(evidence.split('.')[1:]).strip() + '.'

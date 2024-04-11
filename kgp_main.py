@@ -5,14 +5,14 @@ from tqdm import tqdm
 import random 
 
 from KGP.Traversal_agents.KGP import get_supporting_evidence
-from KGP.Traversal_agents.utils import load_graph, generate_evidence_record, parse_evidence_string
+from KGP.Traversal_agents.utils import load_graph, generate_evidence_record
 from KGP.Traversal_agents.seed_retriever import get_seeding_retriever
 from KGP.Traversal_agents.agents import get_traversal_agent
 
 
 if __name__ == '__main__':
     # Load config
-    args = yaml.safe_load(open('./configs/kgp.yml', 'r'))
+    args = yaml.safe_load(open('./configs/kgp/mdr_agent_wiki.yml', 'r'))
     
     # Index match the position of the question_dataset dataset: indexed_test_docs.json
     if args['dataset'] == 'hotpot':
@@ -89,7 +89,7 @@ if __name__ == '__main__':
                 # Use the retriever only
                 init_retriever.topk = args['init_retriever']['no_traversal_topk'] # Update the topk
                 evidence_indices = init_retriever.retrieve(user_query) 
-                evidence = [parse_evidence_string(init_retriever.all_documents[i]) for i in evidence_indices]
+                evidence = [init_retriever.all_documents[i] for i in evidence_indices]
             else:
                 evidence = get_supporting_evidence(user_query, G, init_retriever, traversal_agent, args)
             

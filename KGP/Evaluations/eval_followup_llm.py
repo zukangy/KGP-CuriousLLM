@@ -5,11 +5,12 @@ from rouge import Rouge
 from sentence_transformers import SentenceTransformer, util
 import os
 
-# Assuming all your files are in the 'DATA/Mistral/' directory
-data_dir = 'DATA/Mistral/test_followups'
+# Assuming all files are in the 'DATA/Mistral/' directory
+# test_followups/ is the output from grid_search_mistral_main.py
+data_dir = './DATA/Mistral/test_followups'
 files = [f for f in os.listdir(data_dir) if f.endswith('.json')]
 
-# Initialize the ROUGE and model outside the loop to save resources
+# Initialize the ROUGE and sentence transformer
 rouge = Rouge()
 model = SentenceTransformer('sentence-transformers/multi-qa-MiniLM-L6-cos-v1')
 
@@ -24,6 +25,7 @@ def process_file(file_path):
         reference = record['follow-up']
         candidate = record['response']
         rouge_score = rouge.get_scores(candidate, reference)[0]
+        # Only store the F1 score
         rouge_scores.append({
             'rouge1': rouge_score['rouge-1']['f'],
             'rougeL': rouge_score['rouge-l']['f']

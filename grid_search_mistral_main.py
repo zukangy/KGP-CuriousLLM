@@ -48,6 +48,7 @@ if __name__ == '__main__':
         model, tokenizer, _ = load(args['model']['quantized_model_path'])
         tokenizer.model_max_length = 2048
 
+    # Modify below variable to limit the number of samples to process
     limit = min(100, len(data))
     data = data[:limit]
 

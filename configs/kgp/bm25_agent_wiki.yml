@@ -9,7 +9,7 @@ init_retriever:
   no_traversal_topk: 7
   topk: 5
 retriever:
-  name: "mdr"
+  name: "bm25"
   model: "models/mistral/mistral_quantized_8_bit"
   adapter: "models/mistral/ft_mistral_quantized_8_bit_2024-04-05_21-28-35/cp_mistral_quantized_8_bit/adapters.npz"
   model_params:
@@ -25,12 +25,12 @@ retriever:
     max_target_length: 512
   traversal_params: 
     n_hop: 2
-    n_neighbors: 3
+    n_neighbors: 4
 KG: "DATA/KG/graphs/graph_2wiki/graph.gpickle"
 emb_model: 
   model: "sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
 checkpoint:
-  id: "mdr_title_agent"
+  id: "bm25_agent"
   resume: False
   save_every: 1
   save_dir: "DATA/KG/evidence/wiki_evidence_100"
