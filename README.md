@@ -1,6 +1,6 @@
 # CuriousLLM: Elevating Multi-Document QA with Reasoning-Infused Knowledge Graph Prompting
 
-In our work, we proposed a novel reasoning-infused LLM traversal agent which generates question-based query to guide the search through a knowledge graph. The overall logic is illustrated below. For detailed explanation, please refer to our [paper]().
+In our work, we proposed a novel reasoning-infused LLM traversal agent which generates question-based query to guide the search through a knowledge graph. The overall logic is illustrated below. For detailed explanation, please refer to our [paper](https://arxiv.org/abs/2404.09077).
 
 ![Flowchart](/images/workflow.png)
 
