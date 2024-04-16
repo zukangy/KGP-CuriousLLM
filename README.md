@@ -111,4 +111,15 @@ python KGP/LLMs/Mistral/generate_answer.py
 
 
 
-### Citatioin
+### Citation
+If you like our work, CuriousLLM or Follow-upQA, please cite our work.
+```
+@misc{yang2024curiousllm,
+      title={CuriousLLM: Elevating Multi-Document QA with Reasoning-Infused Knowledge Graph Prompting}, 
+      author={Zukang Yang and Zixuan Zhu},
+      year={2024},
+      eprint={2404.09077},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL}
+}
+```
