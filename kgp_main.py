@@ -29,6 +29,10 @@ if __name__ == '__main__':
         
         comparison = [3, 4, 5, 6, 7, 8, 10, 15, 16, 17, 19, 24, 25, 26, 30, 34, 37, 47, 48, 50, 59, 60, 61, 62, 63, 70, 71, 72,
                       76, 78, 84, 85, 89, 90, 93, 94, 95, 96, 99, 107, 114, 115, 116, 117, 119, 128, 139, 141, 145, 150]
+        
+    elif args['dataset'] == 'iirc': # most of the questions are bridge
+        bridge = list(range(0, 50))
+        comparison = list(range(50, 100))
     
     question_indices = bridge + comparison
     random.seed(args['seed'])
