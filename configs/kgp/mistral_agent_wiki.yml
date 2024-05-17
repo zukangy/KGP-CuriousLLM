@@ -7,7 +7,7 @@ init_retriever:
   name: 'tfidf'
   no_traversal: False
   no_traversal_topk: 7
-  topk: 5
+  topk: 4
 retriever:
   name: "mistral"
   model: "models/mistral/mistral_quantized_8_bit"
