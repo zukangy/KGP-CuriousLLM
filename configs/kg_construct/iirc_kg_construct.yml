@@ -1,0 +1,11 @@
+root_dir: "."
+method: 'gpu'
+run_id: 'iirc'
+algo_params:
+  n_neighbors: 20
+  metric: "cosine"
+  batch_size: 100
+  device: "mps"
+emb_file: "DATA/KG/emb/emb_iirc/passage.npy"
+passages_file: "DATA/KG/emb/emb_iirc/passages.json"
+

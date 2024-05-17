@@ -30,7 +30,7 @@ KG: "DATA/KG/graphs/graph_hotpot/graph.gpickle"
 emb_model: 
   model: "sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
 checkpoint:
-  id: "bm25_agent"
+  id: "mdr_agent"
   resume: False
   save_every: 1
   save_dir: "DATA/KG/evidence/hotpot_evidence_100"

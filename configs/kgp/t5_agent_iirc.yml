@@ -1,7 +1,7 @@
 root_dir: '.'
 seed: 2048
-dataset: "hotpot"
-question_dataset: "DATA/HotpotQA/indexed_test_docs.json"
+dataset: "iirc"
+question_dataset: "DATA/IIRC/indexed_test_docs.json"
 device: "mps"
 init_retriever:
   name: 'tfidf'
@@ -26,12 +26,12 @@ retriever:
   traversal_params: 
     n_hop: 2
     n_neighbors: 3
-KG: "DATA/KG/graphs/graph_hotpot/graph.gpickle"
+KG: "DATA/KG/graphs/graph_iirc/graph.gpickle"
 emb_model: 
   model: "sentence-transformers/multi-qa-MiniLM-L6-cos-v1"
 checkpoint:
   id: "t5_agent"
   resume: False
   save_every: 1
-  save_dir: "DATA/KG/evidence/hotpot_evidence_100"
+  save_dir: "DATA/KG/evidence/iirc_evidence_100"
   checkpoint_path: 
